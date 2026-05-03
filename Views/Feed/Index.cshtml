@@ -46,18 +46,44 @@
                         <img src="/images/green-toad-logo.svg" alt="Greenswamp Logo" class="h-8 w-8">
                         <span class="text-2xl font-bold text-swamp-600">Greenswamp</span>
                     </div>
-                    <div class="space-x-2">
-                        <a href="/register">
-                            <button class="bg-swamp-500 font-semibold text-white px-4 py-2 rounded-full hover:bg-swamp-600">
-                                Register
-                            </button>
-                        </a>
-                        <a href="/login">
-                            <button class="bg-slate-200 font-semibold text-slate-900 px-4 py-2 rounded-full hover:bg-slate-300">
-                                Login
-                            </button>
-                        </a>
-                    </div>
+                    @if(User.Identity.IsAuthenticated)
+                    {
+                        var username = User.Identity.Name;
+                        <div class="flex items-center justify-between p-4 bg-swamp-50 rounded-xl mb-2 text-swamp-900 border border-swamp-200">
+                            <a href="/profile/@username" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                                <div class="w-10 h-10 bg-swamp-200 rounded-full flex items-center justify-center font-bold text-swamp-700">
+                                    @username?.Substring(0,1).ToUpper()
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-sm hover:underline">@username</h4>
+                                </div>
+                            </a>
+                            <a href="/Account/Logout" class="text-sm font-semibold hover:underline text-swamp-600 hover:text-swamp-800">Log Out</a>
+                        </div>
+                        <button class="w-full flex items-center justify-center bg-swamp-500 text-white space-x-2 py-3 rounded-full hover:bg-swamp-600" onclick="openPostModal()">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 14V22H2.99997V4H13"></path>
+                                <path d="M17.4608 4.03921C18.2418 3.25817 19.5082 3.25816 20.2892 4.03921L20.9608 4.71079C21.7418 5.49184 21.7418 6.75817 20.9608 7.53921L11.5858 16.9142C11.2107 17.2893 10.702 17.5 10.1716 17.5L7.5 17.5L7.5 14.8284C7.5 14.298 7.71071 13.7893 8.08579 13.4142L17.4608 4.03921Z"></path>
+                                <path d="M16.25 5.25L19.75 8.75"></path>
+                            </svg>
+                            <span>New Ribbit</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="space-x-2">
+                            <a href="/Account/Register">
+                                <button class="bg-swamp-500 font-semibold text-white px-4 py-2 rounded-full hover:bg-swamp-600">
+                                    Register
+                                </button>
+                            </a>
+                            <a href="/Account/Login">
+                                <button class="bg-slate-200 font-semibold text-slate-900 px-4 py-2 rounded-full hover:bg-slate-300">
+                                    Login
+                                </button>
+                            </a>
+                        </div>
+                    }
                 </div>
 
                 <!-- Quick Links -->
@@ -121,13 +147,13 @@
                                         </div>
                                     }
                                     <div class="mt-4 flex items-center space-x-6 text-swamp-500">
-                                        <button class="flex items-center space-x-2 hover:text-swamp-600">
+                                        <button class="flex items-center space-x-2 hover:text-swamp-600" onclick="submitInteraction(@item.Post.PostId, 'comment')">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                             </svg>
                                             <span>@item.Post.AnswersCount Answers</span>
                                         </button>
-                                        <button class="flex items-center space-x-2 hover:text-swamp-600">
+                                        <button class="flex items-center space-x-2 hover:text-swamp-600" onclick="submitInteraction(@item.Post.PostId, 'reribb')">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                             </svg>
@@ -270,14 +296,14 @@
                 <h3 class="text-xl font-semibold">New Ribbit</h3>
                 <button onclick="closePostModal()" class="text-swamp-500 hover:text-swamp-700">✕</button>
             </div>
-            <textarea class="w-full p-4 border border-swamp-200 rounded-lg focus:ring-2 focus:ring-swamp-400 focus:border-transparent"
+            <textarea id="postContent" class="w-full p-4 border border-swamp-200 rounded-lg focus:ring-2 focus:ring-swamp-400 focus:border-transparent"
                       rows="4"
                       placeholder="What's hopping?"></textarea>
             <div class="mt-4 flex justify-between items-center">
                 <div class="space-x-2">
                     <button class="p-2 hover:bg-swamp-100 rounded-lg">🐸 Add Frogmoji</button>
                 </div>
-                <button class="bg-swamp-500 text-white px-6 py-2 rounded-full hover:bg-swamp-600">
+                <button onclick="submitNewPost()" class="bg-swamp-500 text-white px-6 py-2 rounded-full hover:bg-swamp-600">
                     Send Ribbit
                 </button>
             </div>
@@ -291,6 +317,40 @@
 
         function closePostModal() {
             document.getElementById('postModal').classList.add('hidden');
+        }
+
+        async function submitNewPost() {
+            const content = document.getElementById('postContent').value.trim();
+            if (!content) return;
+
+            const response = await fetch('/api/postapi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content })
+            });
+
+            if (response.ok) {
+                document.getElementById('postContent').value = '';
+                closePostModal();
+                window.location.reload(); // Refresh feed manually for simplicity
+            } else {
+                alert('Session expired or error occurred!');
+            }
+        }
+
+        async function submitInteraction(postId, type) {
+            const response = await fetch('/api/postapi/interaction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId, interactionType: type })
+            });
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Please sign in to perform this action.');
+            }
         }
     </script>
 </body>

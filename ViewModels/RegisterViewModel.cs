@@ -16,6 +16,10 @@ namespace GreenSwampApp.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Required]
+        [StringLength(500)]
+        public string Bio { get; set; }
+
         public string? ReturnUrl { get; set; }
     }
 }
