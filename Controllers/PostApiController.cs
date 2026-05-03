@@ -49,6 +49,8 @@ namespace GreenSwampApp.Controllers
             {
                 UserId = userId,
                 Content = highlightedContent,
+                MediaUrl = string.Empty,
+                MediaType = string.Empty,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -101,7 +103,7 @@ namespace GreenSwampApp.Controllers
                 UserId = userId,
                 PostId = request.PostId,
                 InteractionType = request.InteractionType,
-                CommentContent = request.CommentContent,
+                CommentContent = request.CommentContent ?? string.Empty,
                 CreatedAt = DateTime.UtcNow
             };
 

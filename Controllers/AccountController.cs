@@ -32,7 +32,7 @@ namespace GreenSwampApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-                if (user != null && user.PasswordHash == model.Password) // In a real app, use password hashing
+                if (user != null && user.PasswordHash == model.Password)
                 {
                     await Authenticate(user, model.RememberMe);
 
@@ -66,7 +66,7 @@ namespace GreenSwampApp.Controllers
                     var user = new User
                     {
                         Email = model.Email,
-                        PasswordHash = model.Password, // In a real app, hash this!
+                        PasswordHash = model.Password,
                         DisplayName = model.FullName,
                         Username = model.Email.Split('@')[0] + Guid.NewGuid().ToString().Substring(0, 4), // generate unique username
                         Bio = model.Bio ?? string.Empty,
@@ -121,12 +121,9 @@ namespace GreenSwampApp.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             var referer = Request.Headers["Referer"].ToString();
-            if (!string.IsNullOrEmpty(referer))
-            {
-                return Redirect(referer);
-            }
 
-            return Redirect("/Feed");
+            //return Redirect("/Feed");
+            return Redirect(referer);
         }
     }
 }
