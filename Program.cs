@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using GreenSwampApp.Data;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -15,6 +17,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite("Data Source=App_Data/greenswamp.db"));
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.ReturnUrlParameter = "ReturnUrl";
+    });
 
 builder.Services.AddScoped<ICsvExportService, CsvExportService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -44,6 +54,7 @@ app.UseMiddleware<LoggingMiddleware>();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStatusCodePagesWithReExecute("/NotFound");
