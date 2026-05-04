@@ -119,7 +119,7 @@ namespace GreenSwampApp.Controllers
                         UserId = i.User.UserId,
                         Username = i.User.Username,
                         DisplayName = i.User.DisplayName,
-                        AvatarUrl = i.User.AvatarUrl
+                        AvatarUrl = string.IsNullOrEmpty(i.User.AvatarUrl) ? "/images/green-toad-logo.svg" : i.User.AvatarUrl
                     },
                     Content = i.CommentContent,
                     CreatedAt = i.CreatedAt,
@@ -152,7 +152,7 @@ namespace GreenSwampApp.Controllers
                     UserId = post.User.UserId,
                     Username = post.User.Username,
                     DisplayName = post.User.DisplayName,
-                    AvatarUrl = post.User.AvatarUrl ?? $"https://i.pravatar.cc/100?u={post.User.Username}@greenswamp.com"
+                    AvatarUrl = string.IsNullOrEmpty(post.User.AvatarUrl) ? "/images/green-toad-logo.svg" : post.User.AvatarUrl
                 },
                 Content = ParseContentWithHashtags(post.Content),
                 MediaUrl = post.MediaUrl,
@@ -191,7 +191,7 @@ namespace GreenSwampApp.Controllers
                     UserId = evt.User.UserId,
                     Username = evt.User.Username,
                     DisplayName = evt.User.DisplayName,
-                    AvatarUrl = evt.User.AvatarUrl ?? $"https://i.pravatar.cc/100?u={evt.User.Username}@greenswamp.com"
+                    AvatarUrl = string.IsNullOrEmpty(evt.User.AvatarUrl) ? "/images/green-toad-logo.svg" : evt.User.AvatarUrl
                 }
             };
         }

@@ -396,6 +396,11 @@
                 return;
             }
 
+            const isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());
+            if (!isAuthenticated) {
+                return;
+            }
+
             try {
                 const response = await fetch(`/api/postapi/interaction`, {
                     method: 'POST',

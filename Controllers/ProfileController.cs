@@ -45,7 +45,7 @@ namespace Greenswamp.Controllers
                         UserId = user.UserId,
                         Username = user.Username,
                         DisplayName = user.DisplayName,
-                        AvatarUrl = user.AvatarUrl ?? $"https://i.pravatar.cc/100?u={user.Username}@greenswamp.com"
+                        AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/images/green-toad-logo.svg" : user.AvatarUrl
                     },
                     Content = ParseContentWithHashtags(p.Content),
                     MediaUrl = p.MediaUrl,
@@ -81,7 +81,7 @@ namespace Greenswamp.Controllers
                     UserId = user.UserId,
                     Username = user.Username,
                     DisplayName = user.DisplayName,
-                    AvatarUrl = user.AvatarUrl ?? $"https://i.pravatar.cc/200?u={user.Username}@greenswamp.com"
+                    AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/images/green-toad-logo.svg" : user.AvatarUrl
                 },
                 Bio = user.Bio,
                 CoverImageUrl = user.CoverImageUrl,
