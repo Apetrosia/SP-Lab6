@@ -63,12 +63,22 @@ namespace GreenSwampApp.Controllers
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (existingUser == null)
                 {
+                    string baseUsername = model.FullName.ToLower().Replace(" ", "");
+                    string finalUsername = baseUsername;
+                    int i = 1;
+
+                    while (await _context.Users.AnyAsync(u => u.Username == finalUsername))
+                    {
+                        finalUsername = baseUsername + i.ToString();
+                        i++;
+                    }
+
                     var user = new User
                     {
                         Email = model.Email,
                         PasswordHash = model.Password,
                         DisplayName = model.FullName,
-                        Username = model.Email.Split('@')[0] + Guid.NewGuid().ToString().Substring(0, 4), // generate unique username
+                        Username = finalUsername,
                         Bio = model.Bio ?? string.Empty,
                         AvatarUrl = string.Empty,
                         CoverImageUrl = string.Empty,
