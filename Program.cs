@@ -24,6 +24,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.ReturnUrlParameter = "ReturnUrl";
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.SlidingExpiration = true;
     });
 
 builder.Services.AddScoped<ICsvExportService, CsvExportService>();
@@ -34,12 +36,26 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 var app = builder.Build();
 
 // Auto-create SQLite database and schema on first run.
+var dbJustCreated = false;
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.EnsureCreated();
+    dbJustCreated = dbContext.Database.EnsureCreated();
     SeedData.Initialize(dbContext);
 }
+
+app.Use(async (context, next) =>
+{
+    if (dbJustCreated && context.User.Identity?.IsAuthenticated == true)
+    {
+        await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(
+            context,
+            CookieAuthenticationDefaults.AuthenticationScheme);
+        context.Response.Redirect("/");
+        return;
+    }
+    await next();
+});
 
 if (!app.Environment.IsDevelopment())
 {
