@@ -35,10 +35,8 @@ namespace GreenSwampApp.Controllers
             if (!long.TryParse(userIdString, out var userId))
                 return Unauthorized();
 
-            // Extract tags
             var hashtags = ExtractHashtags(request.Content);
 
-            // Highlight tags in content (simple approach)
             var highlightedContent = Regex.Replace(
                 request.Content,
                 @"(#\w+)",
@@ -55,9 +53,8 @@ namespace GreenSwampApp.Controllers
             };
 
             _context.Posts.Add(post);
-            await _context.SaveChangesAsync(); // Get PostId
+            await _context.SaveChangesAsync();
 
-            // Process tags
             foreach (var tagStr in hashtags)
             {
                 var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name.ToLower() == tagStr.ToLower());
@@ -117,7 +114,7 @@ namespace GreenSwampApp.Controllers
         {
             var regex = new Regex(@"(#\w+)");
             var matches = regex.Matches(content);
-            return matches.Select(m => m.Value).Distinct().ToList();
+            return matches.Select(m => m.Value.Substring(1)).Distinct().ToList();
         }
     }
 }

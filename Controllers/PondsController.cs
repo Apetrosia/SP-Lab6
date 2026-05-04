@@ -48,7 +48,7 @@ namespace Greenswamp.Controllers
                     UserId = p.User.UserId,
                     Username = p.User.Username,
                     DisplayName = p.User.DisplayName,
-                    AvatarUrl = p.User.AvatarUrl ?? $"https://i.pravatar.cc/100?u={p.User.Username}@greenswamp.com"
+                    AvatarUrl = string.IsNullOrEmpty(p.User.AvatarUrl) ? "/images/green-toad-logo.svg" : p.User.AvatarUrl
                 },
                 Content = ParseContentWithHashtags(p.Content),
                 MediaUrl = p.MediaUrl,
