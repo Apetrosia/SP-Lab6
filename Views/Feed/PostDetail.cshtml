@@ -239,7 +239,7 @@
                         <img src="/images/green-toad-logo.svg" alt="You"
                              class="w-12 h-12 rounded-full">
                         <div class="flex-1">
-                            <textarea class="w-full p-4 border border-swamp-200 rounded-xl focus:ring-2 focus:ring-swamp-400 focus:border-transparent placeholder-swamp-500"
+                            <textarea id="replyText" class="w-full p-4 border border-swamp-200 rounded-xl focus:ring-2 focus:ring-swamp-400 focus:border-transparent placeholder-swamp-500"
                                       rows="2" placeholder="Croak your reply..."></textarea>
                             <div class="mt-4 flex justify-between items-center">
                                 <div class="space-x-2">
@@ -247,7 +247,7 @@
                                         🐸 Add Frogmoji
                                     </button>
                                 </div>
-                                <button class="bg-swamp-500 text-white px-6 py-2 rounded-full hover:bg-swamp-600">
+                                <button class="bg-swamp-500 text-white px-6 py-2 rounded-full hover:bg-swamp-600" onclick="submitReply(@Model.Post.PostId)">
                                     Send Answer
                                 </button>
                             </div>
@@ -386,6 +386,33 @@
 
         function closePostModal() {
             document.getElementById('postModal').classList.add('hidden');
+        }
+
+        async function submitReply(postId) {
+            const textInput = document.getElementById('replyText');
+            const content = textInput.value;
+
+            if (!content || content.trim().length === 0) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/postapi/interaction`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ postId: postId, interactionType: 'comment', commentContent: content })
+                });
+
+                if (response.ok) {
+                    location.reload(); 
+                } else {
+                    console.error('Failed to submit comment');
+                }
+            } catch (error) {
+                console.error("Error submitting interaction:", error);
+            }
         }
     </script>
 
